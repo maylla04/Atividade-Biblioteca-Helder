@@ -35,7 +35,7 @@ class Livro {
   async atualizarLivro(id, novosDados) {
     try {
       const livroAtualizado = await this.colecao.updateOne(
-        { _id: new ObjectId(id) },
+        { _id: id },
         { $set: novosDados }
       );
 
@@ -47,7 +47,7 @@ class Livro {
 
   async removerLivro(id) {
     try {
-      const livroRemovido = await this.colecao.deleteOne({ _id: new ObjectId(id) });
+      const livroRemovido = await this.colecao.deleteOne({ _id: id });
       console.log(livroRemovido)
       return livroRemovido;
       
