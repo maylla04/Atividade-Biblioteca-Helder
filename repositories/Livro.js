@@ -2,7 +2,7 @@ const { conectar, getDatabase } = require("../db/MongoClient.js");
 
 class Livro {
   constructor() {
-    this.colecao = getDatabase("biblioteca").collection("livros");
+    this.colecao = getDatabase("biblioteca_digital").collection("livros");
   }
 
   async cadastrarLivro(livro) {
