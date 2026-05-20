@@ -9,15 +9,15 @@ class Emprestimo {
   async cadastrarEmprestimo(emprestimo) {
     try {
       const emprestimoData = {
-        ...emprestimo,
         livro_id: new ObjectId(emprestimo.livro_id),
+        usuario_nome: emprestimo.usuario_nome,
         data_emprestimo: new Date(emprestimo.data_emprestimo),
-        data_devolucao: new Date(emprestimo.data_devolucao),
-        devolvido: false,
+        data_devolucao_prevista: new Date(emprestimo.data_devolucao_prevista),
+        status: "ativo",
       };
 
-      const emprestimoСadastrado = await this.colecao.insertOne(emprestimoData);
-      return emprestimoСadastrado;
+      const emprestimoCadastrado = await this.colecao.insertOne(emprestimoData);
+      return emprestimoCadastrado;
     } catch (error) {
       console.log("Erro ao cadastrar empréstimo:", error.message);
     }
@@ -32,23 +32,23 @@ class Emprestimo {
     }
   }
 
-  async buscarEmprestimoPorAluno(nome_aluno) {
+  async buscarEmprestimoPorUsuario(usuario_nome) {
     try {
-      const emprestimos = await this.colecao.find({ nome_aluno }).toArray();
+      const emprestimos = await this.colecao.find({ usuario_nome }).toArray();
       return emprestimos;
     } catch (error) {
       console.log("Erro ao buscar empréstimo:", error.message);
     }
   }
 
-  async listarNaoDevolvidos() {
+  async listarAtivos() {
     try {
       const emprestimos = await this.colecao
-        .find({ devolvido: false })
+        .find({ status: "ativo" })
         .toArray();
       return emprestimos;
     } catch (error) {
-      console.log("Erro ao listar empréstimos não devolvidos:", error.message);
+      console.log("Erro ao listar empréstimos ativos:", error.message);
     }
   }
 
@@ -58,7 +58,7 @@ class Emprestimo {
         { _id: new ObjectId(id) },
         {
           $set: {
-            devolvido: true,
+            status: "devolvido",
             data_devolucao_real: new Date(),
           },
         }
