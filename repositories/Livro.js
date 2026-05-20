@@ -1,4 +1,5 @@
-const { conectar, getDatabase } = require("../db/MongoClient.js");
+const { getDatabase } = require("../db/MongoClient.js");
+const { ObjectId } = require("mongodb");
 
 class Livro {
   constructor() {
@@ -7,7 +8,15 @@ class Livro {
 
   async cadastrarLivro(livro) {
     try {
-      const livroCadastrado = await this.colecao.insertOne(livro);
+      const livroData = {
+        titulo: livro.titulo,
+        autor: livro.autor,
+        isbn: livro.isbn,
+        exemplares_total: livro.exemplares_total,
+        exemplares_disponiveis: livro.exemplares_total, // começa igual ao total
+      };
+
+      const livroCadastrado = await this.colecao.insertOne(livroData);
       return livroCadastrado;
     } catch (error) {
       console.log("Erro ao cadastrar livro:", error.message);
@@ -32,6 +41,15 @@ class Livro {
     }
   }
 
+  async buscarLivroPorIsbn(isbn) {
+    try {
+      const livro = await this.colecao.findOne({ isbn });
+      return livro;
+    } catch (error) {
+      console.log("Erro ao buscar livro por ISBN:", error.message);
+    }
+  }
+
   async atualizarLivro(id, novosDados) {
     try {
       const livroAtualizado = await this.colecao.updateOne(
@@ -48,7 +66,8 @@ class Livro {
   async removerLivro(id) {
     try {
       const livroRemovido = await this.colecao.deleteOne({ _id: id });
-      console.log(livroRemovido)
+      
+      console.log(livroRemovido);
       return livroRemovido;
       
     } catch (error) {
